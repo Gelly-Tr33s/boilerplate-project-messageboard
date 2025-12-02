@@ -21,38 +21,11 @@ app.use(helmet({
 }));
 
 // Database
-console.log('Attempting to connect to MongoDB...');
-console.log('Connection string exists:', !!process.env.DB);
-
 mongoose.connect(process.env.DB, {
   useNewUrlParser: true,
-  useUnifiedTopology: true,
-  serverSelectionTimeoutMS: 10000,
-  socketTimeoutMS: 45000,
-})
-.then(() => {
-  console.log('✅ MongoDB connected successfully');
-  console.log('Database name:', mongoose.connection.name);
-})
-.catch(err => {
-  console.error('❌ MongoDB connection error:');
-  console.error('Error name:', err.name);
-  console.error('Error message:', err.message);
-  console.error('Full error:', err);
-});
-
-// Additional connection event listeners
-mongoose.connection.on('connected', () => {
-  console.log('Mongoose connected to MongoDB');
-});
-
-mongoose.connection.on('error', (err) => {
-  console.error('Mongoose connection error:', err);
-});
-
-mongoose.connection.on('disconnected', () => {
-  console.log('Mongoose disconnected');
-});
+  useUnifiedTopology: true
+}).then(() => console.log("MongoDB connected"))
+  .catch(err => console.error(err));
 
 
 
