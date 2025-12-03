@@ -21,11 +21,10 @@ app.use(helmet({
 }));
 
 // Database
-mongoose.connect(process.env.DB, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true
-}).then(() => console.log("MongoDB connected"))
+mongoose.connect(process.env.DB)
+  .then(() => console.log("MongoDB connected"))
   .catch(err => console.error(err));
+
 
 
 

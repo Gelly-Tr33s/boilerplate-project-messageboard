@@ -1,9 +1,20 @@
-const chaiHttp = require('chai-http');
 const chai = require('chai');
 const assert = chai.assert;
+
+const chaiHttp = require('chai-http').default || require('chai-http');
+chai.use(chaiHttp);
+
+// fallback: attach request manually if plugin failed
+if (typeof chai.request !== 'function') {
+  chai.request = require('chai-http').request;
+}
+
 const server = require('../server');
 
-chai.use(chaiHttp);
+console.log("chai-http export:", require("chai-http"));
+console.log("Loaded tests file successfully");
+
+
 
 suite('Functional Tests', function() {
   let testThreadId;
