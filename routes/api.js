@@ -75,18 +75,25 @@ module.exports = function (app) {
 
     // GET FULL THREAD
     .get(async (req, res) => {
-      const thread_id = req.query.thread_id;
+      const { thread_id } = req.query;
 
-      const thread = await Thread.findById(thread_id).lean();
+      const thread = await Thread.findById(thread_id);
       if (!thread) return res.json({ error: "not found" });
 
-      thread.replies = thread.replies.map(r => ({
-        _id: r._id,
-        text: r.text,
-        created_on: r.created_on
-      }));
+      // Build FCC-clean object manually
+      const cleanThread = {
+        _id: thread._id,
+        text: thread.text,
+        created_on: thread.created_on,
+        bumped_on: thread.bumped_on,
+        replies: thread.replies.map(r => ({
+          _id: r._id,
+          text: r.text,
+          created_on: r.created_on
+        }))
+      };
 
-      res.json(thread);
+      res.json(cleanThread);
     })
 
     // CREATE REPLY
