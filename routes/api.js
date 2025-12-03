@@ -46,7 +46,7 @@ module.exports = function (app) {
         replies: []
       });
 
-      res.json(thread);  // IMPORTANT: No redirect
+      res.json(thread); 
     })
 
     // REPORT THREAD
@@ -91,24 +91,26 @@ module.exports = function (app) {
 
     // CREATE REPLY
     .post(async (req, res) => {
-      const board = req.params.board;
-      const { thread_id, text, delete_password } = req.body;
+        const { thread_id, text, delete_password } = req.body;
 
-      const reply = {
-        _id: new mongoose.Types.ObjectId(),
-        text,
-        delete_password,
-        created_on: new Date(),
-        reported: false
-      };
+        const thread = await Thread.findById(thread_id);
+        if (!thread) return res.json({ error: "thread not found" });
 
-      const thread = await Thread.findById(thread_id);
-      thread.replies.push(reply);
-      thread.bumped_on = new Date();
-      await thread.save();
+        const reply = thread.replies.create({
+          text,
+          delete_password,
+          created_on: new Date(),
+          reported: false
+        });
 
-      res.json(reply); // IMPORTANT: No redirect
+        // Push and update bump
+        thread.replies.push(reply);
+        thread.bumped_on = new Date();
+        await thread.save();
+
+      res.json(thread); 
     })
+
 
     // REPORT REPLY
     .put(async (req, res) => {
